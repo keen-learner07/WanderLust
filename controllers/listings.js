@@ -70,13 +70,39 @@ module.exports.renderEditForm = async (req, res) => {
 
 module.exports.updateListing = async (req, res) => {
   let { id } = req.params;
-  let listing = await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+  let newAddress = req.body.listing.location;
+
+  let prevListing = await Listing.findById(id);
+
+  let geometryUpdate = {};
+
+  if (newAddress !== prevListing.location) {
+    let response = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+        newAddress
+      )}`,
+      {
+        headers: {
+          "User-Agent": "WanderLust (duakhushi08@gmail.com)",
+        },
+      }
+    );
+    const data = await response.json();
+    const coordinates = [data[0].lon, data[0].lat];
+
+    geometryUpdate.geometry = { type: "Point", coordinates };
+  }
+
+  let newListing = await Listing.findByIdAndUpdate(id, {
+    ...req.body.listing,
+    ...geometryUpdate,
+  });
 
   if (typeof req.file != "undefined") {
     let url = req.file.path;
     let filename = req.file.filename;
-    listing.image = { url, filename };
-    await listing.save();
+    newListing.image = { url, filename };
+    await newListing.save();
   }
 
   req.flash("success", "Listing Updated!");
