@@ -4,6 +4,27 @@ if (process.env.NODE_ENV != "production") {
 
 const express = require("express");
 const app = express();
+
+const helmet = require("helmet");
+
+// Tell Express it’s behind a proxy like Render
+app.enable("trust proxy");
+
+// Force HTTPS (redirect http -> https)
+app.use((req, res, next) => {
+  if (req.secure || req.get("X-Forwarded-Proto") === "https") {
+    return next();
+  }
+  return res.redirect("https://" + req.headers.host + req.url);
+});
+
+// Add secure headers with Helmet
+app.use(
+  helmet({
+    contentSecurityPolicy: false, // disable CSP for now (can configure later)
+  })
+);
+
 const mongoose = require("mongoose");
 const path = require("path");
 const methodOverride = require("method-override");
