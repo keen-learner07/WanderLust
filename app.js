@@ -11,12 +11,14 @@ const helmet = require("helmet");
 app.enable("trust proxy");
 
 // Force HTTPS (redirect http -> https)
-app.use((req, res, next) => {
-  if (req.secure || req.get("X-Forwarded-Proto") === "https") {
-    return next();
-  }
-  return res.redirect("https://" + req.headers.host + req.url);
-});
+if (process.env.NODE_ENV === "production") {
+  app.use((req, res, next) => {
+    if (req.secure || req.get("X-Forwarded-Proto") === "https") {
+      return next();
+    }
+    res.redirect("https://" + req.headers.host + req.url);
+  });
+}
 
 // Add secure headers with Helmet
 app.use(
