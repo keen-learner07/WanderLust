@@ -1,8 +1,27 @@
 const Listing = require("../models/listing.js");
 
 module.exports.index = async (req, res) => {
-  const allListings = await Listing.find({});
-  res.render("listings/index.ejs", { allListings, showSearch: true });
+  const searchQuery = req.query.query;
+  let listings;
+
+  if (searchQuery) {
+    listings = await Listing.find({
+      $or: [
+        { title: { $regex: searchQuery, $options: "i" } },
+        { location: { $regex: searchQuery, $options: "i" } },
+        { country: { $regex: searchQuery, $options: "i" } },
+      ],
+    });
+
+    if (listings.length === 0) {
+      req.flash("error", "No listings found for your search!");
+      return res.redirect("/listings");
+    }
+  } else {
+    listings = await Listing.find({});
+  }
+
+  res.render("listings/index.ejs", { allListings: listings, showSearch: true });
 };
 
 module.exports.renderNewForm = (req, res) => {
@@ -39,6 +58,12 @@ module.exports.createListing = async (req, res) => {
     }
   );
   const data = await response.json();
+
+  if (!data || data.length === 0) {
+    req.flash("error", "Invalid location!");
+    return res.redirect("/listings/new");
+  }
+
   const coordinates = [data[0].lon, data[0].lat];
 
   let url = req.file.path;
@@ -48,8 +73,7 @@ module.exports.createListing = async (req, res) => {
   newListing.owner = req.user._id;
   newListing.image = { url, filename };
   newListing.geometry = { type: "Point", coordinates };
-  let savedListing = await newListing.save();
-  console.log(savedListing);
+  await newListing.save();
   req.flash("success", "New Listing Created!");
   res.redirect("/listings");
 };
