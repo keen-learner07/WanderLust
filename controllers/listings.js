@@ -1,27 +1,61 @@
 const Listing = require("../models/listing.js");
 
+const categoryMap = {
+  Mountain: "Mountains",
+  Beach: "Beaches",
+  Farm: "Farms",
+  City: "Cities",
+  Countryside: "Countryside",
+  Manor: "Manors",
+  Boathouse: "Boathouses",
+  Arctic: "Arctic",
+  Camping: "Camping",
+  Forest: "Forests",
+  Dome: "Domes",
+};
+
 module.exports.index = async (req, res) => {
-  const searchQuery = req.query.query;
-  let listings;
+  const { query: searchQuery, category } = req.query;
+  let filter = {};
 
   if (searchQuery) {
-    listings = await Listing.find({
-      $or: [
-        { title: { $regex: searchQuery, $options: "i" } },
-        { location: { $regex: searchQuery, $options: "i" } },
-        { country: { $regex: searchQuery, $options: "i" } },
-      ],
-    });
-
-    if (listings.length === 0) {
-      req.flash("error", "No listings found for your search!");
-      return res.redirect("/listings");
-    }
-  } else {
-    listings = await Listing.find({});
+    filter.$or = [
+      { title: { $regex: searchQuery, $options: "i" } },
+      { location: { $regex: searchQuery, $options: "i" } },
+      { country: { $regex: searchQuery, $options: "i" } },
+    ];
   }
 
-  res.render("listings/index.ejs", { allListings: listings, showSearch: true });
+  if (category) {
+    filter.category = category;
+  }
+
+  const listings = await Listing.find(filter);
+
+  if (listings.length === 0 && (searchQuery || category)) {
+    const displayCategory = category ? categoryMap[category] : "";
+
+    if (searchQuery && category) {
+      req.flash(
+        "error",
+        `No listings found matching "${searchQuery}" in the category "${displayCategory}"`
+      );
+    } else if (searchQuery) {
+      req.flash("error", `No listings found matching "${searchQuery}"`);
+    } else if (category) {
+      req.flash(
+        "error",
+        `No listings found in the category "${displayCategory}"`
+      );
+    }
+    return res.redirect("/listings");
+  }
+
+  res.render("listings/index.ejs", {
+    allListings: listings,
+    showSearch: true,
+    category,
+  });
 };
 
 module.exports.renderNewForm = (req, res) => {

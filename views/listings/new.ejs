@@ -39,6 +39,7 @@
           class="form-control"
           required
         />
+        <div class="invalid-feedback">Add an image!</div>
       </div>
 
       <div class="row">
@@ -69,6 +70,30 @@
           required
         />
         <div class="invalid-feedback">Location should be valid!</div>
+      </div>
+
+      <div class="mb-3">
+        <label for="category" class="form-label">Category</label>
+        <select
+          name="listing[category]"
+          id="category"
+          class="form-select"
+          required
+        >
+          <option value="" disabled selected>Select a category</option>
+          <option value="Mountain">Mountain</option>
+          <option value="Beach">Beach</option>
+          <option value="Farm">Farm</option>
+          <option value="City">City</option>
+          <option value="Countryside">Countryside</option>
+          <option value="Manor">Manor</option>
+          <option value="Boathouse">Boathouse</option>
+          <option value="Arctic">Arctic</option>
+          <option value="Camping">Camping</option>
+          <option value="Forest">Forest</option>
+          <option value="Dome">Dome</option>
+        </select>
+        <div class="invalid-feedback">Add a category!</div>
       </div>
 
       <button class="btn btn-dark add-btn mt-3">Add</button>

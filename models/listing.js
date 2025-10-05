@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const Review = require("./review.js");
+const { required } = require("joi");
 
 const listingSchema = new Schema({
   title: {
@@ -38,7 +39,20 @@ const listingSchema = new Schema({
   },
   category: {
     type: String,
-    enum: [""],
+    enum: [
+      "Mountain",
+      "Beach",
+      "Farm",
+      "City",
+      "Countryside",
+      "Manor",
+      "Boathouse",
+      "Arctic",
+      "Camping",
+      "Forest",
+      "Dome",
+    ],
+    required: true,
   },
 });
 
