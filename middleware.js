@@ -58,3 +58,10 @@ module.exports.isReviewAuthor = async (req, res, next) => {
   }
   next();
 };
+
+module.exports.preprocessPrice = (req, res, next) => {
+  if (req.body.listing && req.body.listing.price) {
+    req.body.listing.price = Number(req.body.listing.price.replace(/,/g, ""));
+  }
+  next();
+};

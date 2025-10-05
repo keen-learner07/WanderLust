@@ -1,7 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const wrapAsync = require("../utils/wrapAsync.js");
-const { validateListing, isLoggedIn, isOwner } = require("../middleware.js");
+const {
+  validateListing,
+  isLoggedIn,
+  isOwner,
+  preprocessPrice,
+} = require("../middleware.js");
 const listingController = require("../controllers/listings.js");
 const multer = require("multer");
 const { storage } = require("../cloudConfig.js");
@@ -14,6 +19,7 @@ router
   .post(
     isLoggedIn,
     upload.single("listing[image]"),
+    preprocessPrice,
     validateListing,
     wrapAsync(listingController.createListing)
   );
@@ -29,6 +35,7 @@ router
     isLoggedIn,
     isOwner,
     upload.single("listing[image]"),
+    preprocessPrice,
     validateListing,
     wrapAsync(listingController.updateListing)
   )
