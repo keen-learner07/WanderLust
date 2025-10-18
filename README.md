@@ -1,4 +1,4 @@
-#Wanderlust — Airbnb-Inspired Full-Stack Web Application
+# Wanderlust — Airbnb-Inspired Full-Stack Web Application
 
 Wanderlust is a full-stack web application inspired by Airbnb, built using MongoDB, Express, Node.js with HTML, CSS, JavaScript, and Bootstrap for the frontend. It allows users to explore, create, and manage property listings with seamless authentication.
 
