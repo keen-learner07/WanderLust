@@ -1,4 +1,5 @@
 const Listing = require("../models/listing.js");
+const { cloudinary } = require("../cloudConfig");
 
 const categoryMap = {
   Mountain: "Mountains",
@@ -100,13 +101,11 @@ module.exports.createListing = async (req, res) => {
 
   const coordinates = [data[0].lon, data[0].lat];
 
-  let url = req.file.path;
-  let filename = req.file.filename;
-
   const newListing = new Listing(req.body.listing);
   newListing.owner = req.user._id;
-  newListing.image = { url, filename };
   newListing.geometry = { type: "Point", coordinates };
+  newListing.image = req.body.listing.image;
+
   await newListing.save();
   req.flash("success", "New Listing Created!");
   res.redirect("/listings");
@@ -127,48 +126,63 @@ module.exports.renderEditForm = async (req, res) => {
 };
 
 module.exports.updateListing = async (req, res) => {
-  let { id } = req.params;
-  let newAddress = req.body.listing.location;
+  try {
+    const { id } = req.params;
+    const newAddress = req.body.listing.location;
 
-  let prevListing = await Listing.findById(id);
+    const prevListing = await Listing.findById(id);
+    if (!prevListing) {
+      req.flash("error", "Listing not found!");
+      return res.redirect("/listings");
+    }
 
-  let geometryUpdate = {};
+    let geometryUpdate = {};
 
-  if (newAddress !== prevListing.location) {
-    let response = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-        newAddress
-      )}`,
-      {
-        headers: {
-          "User-Agent": "WanderLust (duakhushi08@gmail.com)",
-        },
+    if (newAddress && newAddress !== prevListing.location) {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          newAddress
+        )}`,
+        {
+          headers: {
+            "User-Agent": "WanderLust (duakhushi08@gmail.com)",
+          },
+        }
+      );
+
+      const data = await response.json();
+      if (data && data.length > 0) {
+        const coordinates = [data[0].lon, data[0].lat];
+        geometryUpdate.geometry = { type: "Point", coordinates };
       }
-    );
-    const data = await response.json();
-    const coordinates = [data[0].lon, data[0].lat];
+    }
 
-    geometryUpdate.geometry = { type: "Point", coordinates };
+    const updateData = { ...req.body.listing, ...geometryUpdate };
+
+    if (req.body.listing.image && req.body.listing.image.url) {
+      updateData.image = req.body.listing.image;
+    }
+
+    await Listing.findByIdAndUpdate(id, updateData);
+
+    req.flash("success", "Listing Updated!");
+    res.redirect(`/listings/${id}`);
+  } catch (err) {
+    console.error(err);
+    req.flash("error", "Something went wrong while updating the listing!");
+    res.redirect("/listings");
   }
-
-  let newListing = await Listing.findByIdAndUpdate(id, {
-    ...req.body.listing,
-    ...geometryUpdate,
-  });
-
-  if (typeof req.file != "undefined") {
-    let url = req.file.path;
-    let filename = req.file.filename;
-    newListing.image = { url, filename };
-    await newListing.save();
-  }
-
-  req.flash("success", "Listing Updated!");
-  res.redirect(`/listings/${id}`);
 };
 
 module.exports.destroyListing = async (req, res) => {
   let { id } = req.params;
+
+  const listing = await Listing.findById(id);
+
+  if (listing.image && listing.image.filename) {
+    await cloudinary.uploader.destroy(listing.image.filename);
+  }
+
   await Listing.findByIdAndDelete(id);
   req.flash("success", "Listing Deleted!");
   res.redirect("/listings");
