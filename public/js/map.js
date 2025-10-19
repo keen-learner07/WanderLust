@@ -22,6 +22,17 @@ const map = new maplibregl.Map({
   zoom: 9,
 });
 
+// Wait for window load and slight delay to ensure layout is ready
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    map.resize();
+  }, 400);
+});
+
+// Also resize on window resize
+window.addEventListener("resize", () => map.resize());
+
+// Add marker
 const marker = new maplibregl.Marker({ color: "red" })
   .setLngLat(listing.geometry.coordinates)
   .setPopup(
