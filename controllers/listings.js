@@ -10,7 +10,7 @@ const categoryMap = {
   Manor: "Manors",
   Boathouse: "Boathouses",
   Arctic: "Arctic",
-  Camping: "Camping",
+  Villa: "Villas",
   Forest: "Forests",
   Dome: "Domes",
 };
