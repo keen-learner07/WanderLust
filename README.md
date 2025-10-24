@@ -30,7 +30,7 @@ Wanderlust is a full-stack web application inspired by Airbnb, built using Mongo
 
    To fully test the application's core features, including CRUD (Create, Read, Update, Delete) and the implemented Owner-Based Authorization Logic, please use the following demo credentials:
    
-   **Username**: Sam
+   **Username**: Sam <br>
    **Password**: 6397
 
    After logging in with these credentials, you can test the full **CRUD** functionality on the first listing.
