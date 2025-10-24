@@ -26,6 +26,15 @@ Wanderlust is a full-stack web application inspired by Airbnb, built using Mongo
 
    Passport.js — Authentication
 
+🔑 Demo & Authorization Testing
+
+   To fully test the application's core features, including CRUD (Create, Read, Update, Delete) and the implemented Owner-Based Authorization Logic, please use the following demo credentials:
+   
+   **Username**: Sam
+   **Password**: 6397
+
+   After logging in with these credentials, you can test the full **CRUD** functionality on the first listing.
+
 🌐 Live Demo
 
    Try it here: https://wander-lust-gamma.vercel.app/listings
