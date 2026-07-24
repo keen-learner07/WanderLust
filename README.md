@@ -1,4 +1,4 @@
-# Wanderlust — Airbnb-Inspired Full-Stack Web Application
+# Wanderlust - Airbnb-Inspired Full-Stack Web Application
 
 Wanderlust is a full-stack web application inspired by Airbnb, built using MongoDB, Express, Node.js with HTML, CSS, JavaScript, and Bootstrap for the frontend. It allows users to explore, create, and manage property listings with seamless authentication.
 
@@ -8,23 +8,23 @@ Wanderlust is a full-stack web application inspired by Airbnb, built using Mongo
 
    Add, Edit, and Delete Listings
 
-   Search Functionality — find listings by keywords
+   Search Functionality - find listings by keywords
 
-   Category Filters — browse by type (Domes, Boathouses, Forests, etc.)
+   Category Filters - browse by type (Domes, Boathouses, Forests, etc.)
 
-   Interactive Map — displays listing locations with popups using MapLibre GL JS
+   Interactive Map - displays listing locations with popups using MapLibre GL JS
 
 🧩 Tech Stack
 
-   MongoDB — Database
+   MongoDB - Database
 
-   Express.js — Backend API
+   Express.js - Backend API
 
-   Node.js — Server runtime
+   Node.js - Server runtime
 
-   HTML, CSS, JavaScript, Bootstrap — Frontend
+   HTML, CSS, JavaScript, Bootstrap - Frontend
 
-   Passport.js — Authentication
+   Passport.js - Authentication
 
 🔑 Demo & Authorization Testing
 
